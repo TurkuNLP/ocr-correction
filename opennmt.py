@@ -35,9 +35,6 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
     open_nmt_output = [' '.join(sentence.replace(' ', '_')) + '\n' for sentence in gold_sentences]
     
     split = filename.split('.')[0]
-    # OpenNMT assumes certain file names
-    if split == 'devel':
-        split = 'val'
     
     oinput_file = open(os.path.join(args.out_dir, 'src_%s.txt' % split), 'wt')
     oinput_file.writelines(open_nmt_input)
