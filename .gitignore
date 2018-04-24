@@ -1,2 +1,4 @@
 *.pyc
 data/
+models/
+OpenNMT-py/
