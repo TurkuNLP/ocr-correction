@@ -34,9 +34,14 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
     open_nmt_input = [' '.join(sentence.replace(' ', '_')) + '\n' for sentence in ocr_sentences]
     open_nmt_output = [' '.join(sentence.replace(' ', '_')) + '\n' for sentence in gold_sentences]
     
-    oinput_file = open(os.path.join(args.out_dir, 'open_nmt_%s_input.txt' % filename.split('.')[0]), 'wt')
+    split = filename.split('.')[0]
+    # OpenNMT assumes certain file names
+    if split == 'devel':
+        split = 'val'
+    
+    oinput_file = open(os.path.join(args.out_dir, 'src_%s.txt' % split), 'wt')
     oinput_file.writelines(open_nmt_input)
     
-    ooutput_file = open(os.path.join(args.out_dir, 'open_nmt_%s_output.txt' % filename.split('.')[0]), 'wt')
-    ooutput_file.writelines(open_nmt_input)
+    ooutput_file = open(os.path.join(args.out_dir, 'tgt_%s.txt' % split), 'wt')
+    ooutput_file.writelines(open_nmt_output)
 
