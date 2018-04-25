@@ -13,8 +13,8 @@ def doc2sentences(document):
         # The OCR data may have caps after the alignment with the gold standard data.
         if ocr_token:
             ocr_sentence.append(ocr_token)
-        else:
-            ocr_sentence.append('')
+        # else:
+        #     ocr_sentence.append('')
         if gold_token.endswith('.'):
             gold_sentences.append(gold_sentence)
             ocr_sentences.append(ocr_sentence)

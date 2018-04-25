@@ -22,6 +22,7 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
         gold_sentences += gold
         ocr_sentences += ocr
     
+    # import pdb; pdb.set_trace()
     gold_max_len = max([len(s) for s in gold_sentences])
     ocr_max_len = max([len(s) for s in ocr_sentences])
     
@@ -31,14 +32,15 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
     # but we are using it as a character level model.
     # Thus we want to replace the original whitespaces with an underscore
     # and separate individual characters with whitespace
-    open_nmt_input = [' '.join(sentence.replace(' ', '_')) + '\n' for sentence in ocr_sentences]
-    open_nmt_output = [' '.join(sentence.replace(' ', '_')) + '\n' for sentence in gold_sentences]
+    # OpenNMT will exclude examples with an empty input so we add <BEG> token for each sentence.
+    open_nmt_input = ['<BEG>' + ' '.join(sentence.replace(' ', '_')) + '\n' for sentence in ocr_sentences]
+    open_nmt_output = ['<BEG>' + ' '.join(sentence.replace(' ', '_')) + '\n' for sentence in gold_sentences]
     
     split = filename.split('.')[0]
     
-    oinput_file = open(os.path.join(args.out_dir, 'src_%s.txt' % split), 'wt')
+    oinput_file = open(os.path.join(args.out_dir, 'open_nmt_%s_input.txt' % split), 'wt')
     oinput_file.writelines(open_nmt_input)
     
-    ooutput_file = open(os.path.join(args.out_dir, 'tgt_%s.txt' % split), 'wt')
+    ooutput_file = open(os.path.join(args.out_dir, 'open_nmt_%s_output.txt' % split), 'wt')
     ooutput_file.writelines(open_nmt_output)
 
