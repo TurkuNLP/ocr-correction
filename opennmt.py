@@ -33,8 +33,8 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
     # Thus we want to replace the original whitespaces with an underscore
     # and separate individual characters with whitespace
     # OpenNMT will exclude examples with an empty input so we add <BEG> token for each sentence.
-    open_nmt_input = ['<BEG>' + ' '.join(sentence.replace(' ', '_')) + '\n' for sentence in ocr_sentences]
-    open_nmt_output = ['<BEG>' + ' '.join(sentence.replace(' ', '_')) + '\n' for sentence in gold_sentences]
+    open_nmt_input = ['<BEG> ' + ' '.join(sentence.replace(' ', '_')) + '\n' for sentence in ocr_sentences]
+    open_nmt_output = ['<BEG> ' + ' '.join(sentence.replace(' ', '_')) + '\n' for sentence in gold_sentences]
     
     split = filename.split('.')[0]
     
