@@ -18,7 +18,7 @@ def opennmt2txt(data):
     """
     res = []
     for line in data:
-        clean_line = line.replace('BEG', '').replace(' ', '').replace('_', '')
+        clean_line = line.replace('<BEG>', '').replace(' ', '').replace('_', '')
         res.append(clean_line)
     return res
 
