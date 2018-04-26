@@ -6,3 +6,9 @@ Preprocessing: python preprocess.py -train_src ../data/open_nmt_train_input.txt 
 Training: python train.py -data ../data/open/open -save_model ../models/open/open -gpuid 0
 
 99% of the data is within the 500 character limit.
+
+# Evaluate
+
+Evaluation script takes in two files, predictions and gold. Each file has one sentence per line.
+python3 evaluate.py --pred pred_file.txt --gold gold_file.txt
+
