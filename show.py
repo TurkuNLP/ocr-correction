@@ -5,22 +5,14 @@ Helper to read OpenNMT predictions
 import argparse
 import itertools
 
+from open2txt import opennmt2txt
+
 parser = argparse.ArgumentParser()
 parser.add_argument('input')
 parser.add_argument('predictions')
 parser.add_argument('gold', nargs='?')
 
 args = parser.parse_args()
-
-def opennmt2txt(data):
-    """
-    Converts OpenNMT output to a readable format
-    """
-    res = []
-    for line in data:
-        clean_line = line.replace('<BEG>', '').replace(' ', '').replace('_', ' ')
-        res.append(clean_line)
-    return res
 
 input_data = open(args.input)
 pred_data = open(args.predictions)

@@ -1,8 +1,10 @@
-def doc2sentences(document):
+def doc2sentences(document, single_tokens=False):
     """
     Concatenates tokens in a document and splits the result into sentences.
     The sentence splitting relies on the gold standard data, i.e. this will easen the task.
     Returns both gold and OCR sentences
+    
+    single_tokens = True will return single tokens instead of sentences.
     """
     gold_sentences = []
     ocr_sentences = []
@@ -15,7 +17,10 @@ def doc2sentences(document):
             ocr_sentence.append(ocr_token)
         # else:
         #     ocr_sentence.append('')
-        if gold_token.endswith('.'):
+        if single_tokens:
+            gold_sentences.append(gold_sentence)
+            ocr_sentences.append(ocr_sentence)
+        elif gold_token.endswith('.'):
             gold_sentences.append(gold_sentence)
             ocr_sentences.append(ocr_sentence)
             gold_sentence = []
