@@ -20,6 +20,8 @@ def doc2sentences(document, single_tokens=False):
         if single_tokens:
             gold_sentences.append(gold_sentence)
             ocr_sentences.append(ocr_sentence)
+            gold_sentence = []
+            ocr_sentence = []
         elif gold_token.endswith('.'):
             gold_sentences.append(gold_sentence)
             ocr_sentences.append(ocr_sentence)
