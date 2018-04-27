@@ -1,4 +1,5 @@
 import argparse
+from itertools import zip_longest
 from sklearn.metrics import accuracy_score
 
 ''' Evaluate results, just accuracy for now '''
@@ -15,11 +16,11 @@ def evaluate(pred_f, gold_f, eval_level):
 				##TODO Align if this is ever used
 				pass
 			else:
-				## just assuming there's a 1 to 1 ratio in tokens
-				## if pred is messed up, it will be longer
-				for i in range(len(gold_seq)):
-					p.append(pred_seq[i])
-					t.append(gold_seq[i])
+				## if pred is messed up, it will be longer/shorter
+				# Now we penalize the predictions if they are longer than the gold sequence
+				for pred_token, gold_token in zip_longest(pred_seq, gold_seq, fillvalue=''):
+					p.append(pred_token)
+					t.append(gold_token)
 					
 	acc = accuracy_score(p, t)
 	print("Prediction accuracy: {}".format(acc))
