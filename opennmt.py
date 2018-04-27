@@ -11,6 +11,7 @@ from utils import doc2sentences
 parser = argparse.ArgumentParser()
 parser.add_argument('in_dir')
 parser.add_argument('out_dir')
+parser.add_argument('--single_tokens', help="Split data into single tokens instead of sentences", action="store_true")
 args = parser.parse_args()
 
 for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
@@ -18,7 +19,7 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
     gold_sentences = []
     ocr_sentences = []
     for document in data:
-        gold, ocr = doc2sentences(document)
+        gold, ocr = doc2sentences(document, args.single_tokens)
         gold_sentences += gold
         ocr_sentences += ocr
     
@@ -35,6 +36,9 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
     # OpenNMT will exclude examples with an empty input so we add <BEG> token for each sentence.
     open_nmt_input = ['<BEG> ' + ' '.join(sentence.replace(' ', '_')) + '\n' for sentence in ocr_sentences]
     open_nmt_output = ['<BEG> ' + ' '.join(sentence.replace(' ', '_')) + '\n' for sentence in gold_sentences]
+    
+    if not os.path.exists(args.out_dir):
+        os.makedirs(args.out_dir)
     
     split = filename.split('.')[0]
     
