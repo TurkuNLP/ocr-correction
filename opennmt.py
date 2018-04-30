@@ -6,12 +6,19 @@ import json
 import gzip
 import os
 
+import numpy as np
+np.random.seed(42)
+import random
+random.seed(42)
+
+
 from utils import doc2sentences
 
 parser = argparse.ArgumentParser()
 parser.add_argument('in_dir')
 parser.add_argument('out_dir')
 parser.add_argument('--single_tokens', help="Split data into single tokens instead of sentences", action="store_true")
+parser.add_argument('--max_size', help='Maximum number of examples per data split', default=None, type=int)
 args = parser.parse_args()
 
 for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
@@ -29,6 +36,11 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
     
     print('Maximum sentence lengths for %s set in characters: %s / %s (gold/ocr)' % (filename.split('.')[0], gold_max_len, ocr_max_len))
     
+    if args.max_size:
+        print('Limiting number of examples to %s' % args.max_size)
+        gold_sentences = random.sample(gold_sentences, args.max_size)
+        ocr_sentences = random.sample(ocr_sentences, args.max_size)
+
     # OpenNMT assumes tokens separated with whitespace as the input,
     # but we are using it as a character level model.
     # Thus we want to replace the original whitespaces with an underscore
