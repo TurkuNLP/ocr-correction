@@ -11,6 +11,7 @@ np.random.seed(42)
 import random
 random.seed(42)
 
+from sklearn.utils import resample
 
 from utils import doc2sentences
 
@@ -38,8 +39,7 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
     
     if args.max_size:
         print('Limiting number of examples to %s' % args.max_size)
-        gold_sentences = random.sample(gold_sentences, args.max_size)
-        ocr_sentences = random.sample(ocr_sentences, args.max_size)
+        gold_sentences, ocr_sentences = resample(gold_sentences, ocr_sentences, replace=False, n_samples=args.max_size)
 
     # OpenNMT assumes tokens separated with whitespace as the input,
     # but we are using it as a character level model.
