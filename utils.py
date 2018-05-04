@@ -1,16 +1,19 @@
-def doc2sentences(document, single_tokens=False):
+def doc2sentences(document, single_tokens=False, input_index=1):
     """
     Concatenates tokens in a document and splits the result into sentences.
     The sentence splitting relies on the gold standard data, i.e. this will easen the task.
     Returns both gold and OCR sentences
     
     single_tokens = True will return single tokens instead of sentences.
+    input_index = 1 -> current ocr, 2 -> tesseract
     """
     gold_sentences = []
     ocr_sentences = []
     gold_sentence = []
     ocr_sentence = []
-    for gold_token, ocr_token in document[1]:
+    for token in document[1]:
+        gold_token = token[0]
+        ocr_token = token[input_index]
         gold_sentence.append(gold_token)
         # The OCR data may have caps after the alignment with the gold standard data.
         if ocr_token:

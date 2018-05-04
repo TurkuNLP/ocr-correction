@@ -12,8 +12,9 @@ def convert(in_path, out_path):
     for line in data:
         pub_id = line[3].rsplit('_', 1)[0] # The last part of the id is a page number and we want to exclude it since an article may span over multiple pages
         gold = line[5]
-        current = line[7] # FIXME: is this the correct column?
-        documents[pub_id].append((gold, current))
+        current = line[7]
+        tesseract = line[6]
+        documents[pub_id].append((gold, current, tesseract))
     
     out_f = gzip.open(out_path, 'wt')
     out_f.write(json.dumps(list(documents.items()), indent=2))

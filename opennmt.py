@@ -19,6 +19,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('in_dir')
 parser.add_argument('out_dir')
 parser.add_argument('--single_tokens', help="Split data into single tokens instead of sentences", action="store_true")
+parser.add_argument('--tesseract', help="Use tesseract output as the input", action="store_true")
 parser.add_argument('--max_size', help='Maximum number of examples per data split', default=None, type=int)
 args = parser.parse_args()
 
@@ -27,7 +28,10 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
     gold_sentences = []
     ocr_sentences = []
     for document in data:
-        gold, ocr = doc2sentences(document, args.single_tokens)
+        if args.tesseract:
+            gold, ocr = doc2sentences(document, args.single_tokens, 2)
+        else:
+            gold, ocr = doc2sentences(document, args.single_tokens)
         gold_sentences += gold
         ocr_sentences += ocr
     
