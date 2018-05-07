@@ -5,13 +5,14 @@ from operator import itemgetter
 ''' Add artificial noise to data based on given distribution '''
 
 
-def make_distribution(loc):
+def make_distribution(loc, retain_actual):
 	dist = json.load(open(loc, "r"))
 	distribution = {}
 	for key, replacement_dict in dist.items():
 
-		if key in replacement_dict:
-			del replacement_dict[key]
+		if not retain_actual:
+			if key in replacement_dict:
+				del replacement_dict[key]
 		new_values = []
 		new_keys = []
 		replacement_sum = sum(replacement_dict.values())
@@ -28,9 +29,13 @@ def make_distribution(loc):
 def noisify(input_loc, output_loc, distribution, noise_level):
 	data = json.load(gzip.open(input_loc, "rt"))
 	documents = []
+	done = 0
 	for document_id, document_text in data.items():
 		if not document_text: continue
 
+		print("Done: {}/{}".format(done, len(data)), end="\r")
+
+		done += 1
 		doc_list = [document_id]
 		document_text = " ".join(document_text.split()) ##remove new line etc.
 
@@ -72,8 +77,9 @@ if __name__ == "__main__":
 	parser.add_argument("--input", help="Input file.", required=True)
 	parser.add_argument("--output", help="Output file.", required=True)
 	parser.add_argument("--distribution", help="Character distribution file. JSON-format, key per character, value = dictionary of replacement_key:count values", required=True)
+	parser.add_argument("--retain_actual", help="Whether to retain the actual key in the distribution", default=False, action="store_true")
 	parser.add_argument("--noise_level", help="Amount of noise to generate, default=0.1", default=0.1, type=float)
 	args = parser.parse_args()
 	print(args)
-	distribution = make_distribution(args.distribution)
+	distribution = make_distribution(args.distribution, args.retain_actual)
 	noisify(args.input, args.output, distribution, args.noise_level)
