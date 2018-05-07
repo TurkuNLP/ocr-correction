@@ -2,6 +2,8 @@ import argparse
 from itertools import zip_longest
 from sklearn.metrics import accuracy_score
 
+from Levenshtein import distance
+
 ''' Evaluate results, just accuracy for now '''
 
 def evaluate(pred_f, gold_f, eval_level, truncate):
@@ -10,9 +12,12 @@ def evaluate(pred_f, gold_f, eval_level, truncate):
 
 	p, t = [], []
 
+	edits = 0
+	gold_characters = 0
+
 	for i in range(len(predictions)):
 			pred_seq, gold_seq = predictions[i].strip().split(" "), gold[i].strip().split(" ")
-
+			
 			if eval_level == "char":
 				##TODO Align if this is ever used
 				pass
@@ -27,9 +32,14 @@ def evaluate(pred_f, gold_f, eval_level, truncate):
 					for pred_token, gold_token in zip_longest(pred_seq, gold_seq, fillvalue=''):
 						p.append(pred_token)
 						t.append(gold_token)
+						
+						edits += distance(gold_token, pred_token)
+						gold_characters += len(gold_token)
 					
 	acc = accuracy_score(p, t)
-	print("Prediction accuracy: {}".format(acc))
+	char_accuracy = 1 - edits/gold_characters
+	print("Token level accuracy: {}".format(acc))
+	print("Character level accuracy: {}".format(char_accuracy))
 
 
 if __name__ == "__main__":
