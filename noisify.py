@@ -2,6 +2,7 @@ import argparse, gzip, json, sys
 import random
 import numpy as np
 from operator import itemgetter
+from natsort import natsorted
 ''' Add artificial noise to data based on given distribution '''
 
 
