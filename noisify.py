@@ -30,7 +30,9 @@ def noisify(input_loc, output_loc, distribution, noise_level):
 	data = json.load(gzip.open(input_loc, "rt"))
 	documents = []
 	done = 0
-	for document_id, document_text in data.items():
+	data_keys = natsorted(list(data.keys()))
+	for document_id in data_keys:
+		document_text = data[document_id]
 		if not document_text: continue
 
 		print("Done: {}/{}".format(done, len(data)), end="\r")
@@ -64,7 +66,7 @@ def noisify(input_loc, output_loc, distribution, noise_level):
 		word_pairs = []
 		for i in range(0, len(orig_words)):
 			word_pairs.append([orig_words[i], noise_words[i]])
-			
+
 		doc_list.append(word_pairs)
 		documents.append(doc_list)
 
