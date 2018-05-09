@@ -43,7 +43,7 @@ for filename in ['train.json.gz', 'devel.json.gz', 'test.json.gz']:
     
     if args.max_size:
         print('Limiting number of examples to %s' % args.max_size)
-        gold_sentences, ocr_sentences = resample(gold_sentences, ocr_sentences, replace=False, n_samples=min(args.max_size, len(gold_sentences))
+        gold_sentences, ocr_sentences = resample(gold_sentences, ocr_sentences, replace=False, n_samples=min(args.max_size, len(gold_sentences)))
 
     # OpenNMT assumes tokens separated with whitespace as the input,
     # but we are using it as a character level model.
