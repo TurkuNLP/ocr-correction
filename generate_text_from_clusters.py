@@ -45,7 +45,8 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	data = generate_texts(args.input, args.min_freq)
 	if args.output:
-		with open(args.output, "wb") as pf:
-			pickle.dump(data, pf)
+		with gzip.open(args.output, "wt") as pf:
+			#pickle.dump(data, pf)
+			pf.write(json.dumps(data))
 	else:
 		print(data)

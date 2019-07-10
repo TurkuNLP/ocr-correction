@@ -7,10 +7,15 @@ from natsort import natsorted
 
 
 def make_distribution(loc, retain_actual):
-	dist = json.load(open(loc, "r"))
+	if ".gz" in loc:
+		dist = json.load(gzip.open(loc, "rt"))
+	else:
+		dist = json.load(open(loc, "r"))
 	distribution = {}
 	for key, replacement_dict in dist.items():
 
+		if key == "DEL":
+			key = ""
 		if not retain_actual:
 			if key in replacement_dict:
 				del replacement_dict[key]
@@ -19,6 +24,8 @@ def make_distribution(loc, retain_actual):
 		replacement_sum = sum(replacement_dict.values())
 
 		for replacement_key, replacement_value in replacement_dict.items():
+			if replacement_key == "DEL":
+				replacement_key = ""
 			new_values.append([replacement_value / replacement_sum, replacement_key])
 		new_values.sort(key=itemgetter(0))
 		values, keys = [v[0] for v in new_values], [v[1] for v in new_values]
@@ -41,32 +48,52 @@ def noisify(input_loc, output_loc, distribution, noise_level):
 		done += 1
 		doc_list = [document_id]
 		document_text = " ".join(document_text.split()) ##remove new line etc.
-
-		orig_text = document_text
-		text = list(document_text)
-
-		text_indexes = list(range(len(text)))
-		char_indexes = np.random.choice(text_indexes, int(len(text_indexes) * float(noise_level)))
-
-		for char_index in char_indexes:
-			char = text[char_index]
-			if char in distribution:
-				char_distribution_values, char_distribution_keys = distribution[char]
-				new_char = np.random.choice(char_distribution_keys, p=char_distribution_values)
-				if new_char in [" ", "\t", "\n"]:
+		document_words = document_text.split()
+		ocr_words = []
+		real_words = []
+		for word in document_words:
+			real_words.append(word)
+			word = list(word)
+			text_indexes = list(range(len(word)))
+			char_indexes = np.random.choice(text_indexes, int(len(text_indexes) * float(noise_level)))
+			for char_index in char_indexes:
+				char = word[char_index]
+				if char in distribution:
+					char_distribution_values, char_distribution_keys = distribution[char]
+					new_char = np.random.choice(char_distribution_keys, p=char_distribution_values)
+				else:
 					new_char = char
-			else:
-				new_char = char
-			text[char_index] = new_char
+				word[char_index] = new_char
+			ocr_words.append("".join(word))
 
-		text = "".join(text)
-		orig_words = orig_text.split(" ")
-		noise_words = text.split(" ")
-		assert len(orig_words) == len(noise_words)
+		# orig_text = document_text
+		# text = list(document_text)
+		#
+		# text_indexes = list(range(len(text)))
+		# char_indexes = np.random.choice(text_indexes, int(len(text_indexes) * float(noise_level)))
+		#
+		# for char_index in char_indexes:
+		# 	char = text[char_index]
+		# 	if char in distribution:
+		# 		char_distribution_values, char_distribution_keys = distribution[char]
+		# 		new_char = np.random.choice(char_distribution_keys, p=char_distribution_values)
+		# 		if new_char in [" ", "\t", "\n"]:
+		# 			new_char = char
+		# 	else:
+		# 		new_char = char
+		# 	text[char_index] = new_char
+
+		#text = "".join(text)
+	#	print(text)
+		#print(orig_text)
+		#orig_words = orig_text.split(" ")
+		#noise_words = text.split(" ")
+		#assert len(orig_words) == len(noise_words)
+		assert len(ocr_words) == len(real_words)
 
 		word_pairs = []
-		for i in range(0, len(orig_words)):
-			word_pairs.append([orig_words[i], noise_words[i]])
+		for i in range(0, len(real_words)):
+			word_pairs.append([real_words[i], ocr_words[i]])
 
 		doc_list.append(word_pairs)
 		documents.append(doc_list)
